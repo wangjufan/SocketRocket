@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<!-- saved from url=(0058)https://www.html5rocks.com/en/tutorials/websockets/basics/ -->
+<html lang="en" dir="ltr" itemscope="" itemtype="http://schema.org/Article" style="" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths adownload webaudio no-battery blobconstructor contenteditable cors csscalc cssfilters mediaqueries no-regions classlist datalistelem details texttrackapi track filereader filesystem fullscreen getusermedia gamepads xhr2 quotamanagement performance raf no-stylescoped websocketsbinary no-webintents todataurljpeg todataurlwebp webp"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta property="twitter:account_id" content="1593210261">
+  <!-- Copyright (c) 2012 Google Inc.
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *     http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *
+   * Author: Malte Ubl - malteubl@google.com
+   *
+   * 
+   *
+  -->
+  <title>Introducing WebSockets: Bringing Sockets to the Web - HTML5 Rocks</title>
+  <meta name="description" content="Learn how to use WebSockets to add low latency bidirectional client-server communication to your web app.">
+  <meta name="keywords" content="html5,html 5,html5 demos,html5 examples,javascript,css3,notifications,geolocation,web workers,apppcache,file api,filereader,indexeddb,offline,audio,video,drag and drop,chrome,sse,mobile">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta name="theme-color" content="#f04530">
+  <link rel="shortcut icon" href="https://www.html5rocks.com/favicon.ico">
+  <link rel="alternate" type="application/rss+xml" title="HTML5 Rocks RSS" href="http://feeds.feedburner.com/html5rocks">
+  <meta name="google-site-verification" content="E1HOIDkksrWY5npenL8FeQhKn4Ujctd75iO2lfufSyA">
+  <meta itemprop="name" content="Introducing WebSockets: Bringing Sockets to the Web - HTML5 Rocks">
+  <meta itemprop="description" content="Learn how to use WebSockets to add low latency bidirectional client-server communication to your web app.">
+  
+  <meta itemprop="image" content="https://www.html5rocks.com/static/images/html5rocks-logo-wings.png">
+  
+
+  
+    
+  <link rel="canonical" href="https://www.html5rocks.com/tutorials/websockets/basics/">  
+    
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@ChromiumDev">
+  <meta name="twitter:creator" content="@cramforce">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Introducing WebSockets: Bringing Sockets to the Web - HTML5 Rocks">
+  <meta property="og:url" content="https://www.html5rocks.com/en/tutorials/websockets/basics/">
+  <meta property="og:description" content="Learn how to use WebSockets to add low latency bidirectional client-server communication to your web app.">
+  <meta property="og:image" content="https://www.html5rocks.com/static/images/profiles/malteubl.png">
+  <meta property="og:site_name" content="HTML5 Rocks - A resource for open web HTML5 developers">
+  
+
+  
+  <link rel="author" href="https://www.google.com/profiles/116910304844117268718">
+  
+  
+  <link rel="author" href="https://www.google.com/profiles/107085977904914121234">
+  
+  <link rel="publisher" href="https://plus.google.com/+GoogleChromeDevelopers">
+
+  
+  
+  <link rel="alternate" hreflang="de" href="https://www.html5rocks.com/de/tutorials/websockets/basics/">
+  
+  <link rel="alternate" hreflang="es" href="https://www.html5rocks.com/es/tutorials/websockets/basics/">
+  
+  <link rel="alternate" hreflang="ja" href="https://www.html5rocks.com/ja/tutorials/websockets/basics/">
+  
+  <link rel="alternate" hreflang="pt" href="https://www.html5rocks.com/pt/tutorials/websockets/basics/">
+  
+  <link rel="alternate" hreflang="ru" href="https://www.html5rocks.com/ru/tutorials/websockets/basics/">
+  
+  <link rel="alternate" hreflang="zh" href="https://www.html5rocks.com/zh/tutorials/websockets/basics/">
+  
+  
+
+  
+    
+    <link rel="stylesheet" media="all" href="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/v2-combined.min.css">
+    
+
+    
+  
+
+  <link href="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/css" rel="stylesheet">
+
+  <link rel="apple-touch-icon" href="https://www.html5rocks.com/static/images/identity/HTML5_Badge_64.png">
+  <link rel="apple-touch-icon-precomposed" href="https://www.html5rocks.com/static/images/identity/HTML5_Badge_64.png">
+
+  <script type="text/javascript" src="https://html5rocks.disqus.com/count.js" async=""></script><script type="text/javascript" async="" src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/analytics.js"></script><script async="" src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/gtm.js"></script><script async="" src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/analytics.js"></script><script async="" src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/gtm.js"></script><script src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/modernizr.custom.82437.js"></script>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5-els.js"></script>
+  <![endif]-->
+
+  
+</head>
+<body data-href="tutorials-websockets-basics" onload="" class="article tutorial">
+
+  <header class="main" id="siteheader">
+    <h1 id="title">
+      <a href="https://www.html5rocks.com/en/" title="HTML5 Rocks">HTML5 Rocks</a>
+    </h1>
+    <a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#sitenav" id="navtoggle">Show navigation</a>
+
+    
+    <a id="toctoggle" href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc">Table of Contents</a>
+    
+
+    <nav id="sitenav">
+      <ul>
+        
+        <li id="home_menu"><a href="https://www.html5rocks.com/en/" class="home">Home</a></li>
+        
+        <li id="tutorials_menu"><a href="https://www.html5rocks.com/en/tutorials/?page=1" class="tutorials">Tutorials</a></li>
+        <li id="updates_menu"><a href="https://developers.google.com/web/updates/" class="updates">Updates</a></li>
+      </ul>
+    </nav>
+
+    
+    <nav class="toc" id="toc">
+      <h1>Table of Contents</h1>
+
+      <ul><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-introduction-lowlatency">The Problem: Low Latency Client-Server and Server-Client Connections</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-introduction-sockets">Introducing WebSocket: Bringing Sockets to the Web</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-gettingstarted">Getting Started</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-cross">Cross Origin Communication</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-proxyservers">Proxy Servers</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-usetoday">Use WebSockets Today</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-serverside">The Server Side</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-usecases">Use Cases</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-examples">Demos</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-references">References</a></li></ul>
+
+      <h1 class="visible-title">Localizations:</h1>
+      <ul>
+        
+          
+          <li><a href="https://www.html5rocks.com/de/tutorials/websockets/basics/">Deutsch</a></li>
+          
+          <li><a href="https://www.html5rocks.com/es/tutorials/websockets/basics/">Español</a></li>
+          
+          <li><a href="https://www.html5rocks.com/ja/tutorials/websockets/basics/">日本語</a></li>
+          
+          <li><a href="https://www.html5rocks.com/pt/tutorials/websockets/basics/">Português (Brasil)</a></li>
+          
+          <li><a href="https://www.html5rocks.com/ru/tutorials/websockets/basics/">Pусский</a></li>
+          
+          <li><a href="https://www.html5rocks.com/zh/tutorials/websockets/basics/">中文 (简体)</a></li>
+          
+          <li><a href="https://github.com/html5rocks/www.html5rocks.com/blob/master/CONTRIBUTING.md">Contribute another</a></li>
+        
+      </ul>
+    </nav>
+    
+  </header>
+
+  <div class="body-content">
+    
+
+  <section class="title">
+
+    
+
+    <section class="title-text container">
+      
+      <h1>Introducing WebSockets: Bringing Sockets to the Web</h1>
+      
+      
+
+      <a href="https://www.html5rocks.com/en/" class="watermark">HTML5 Rocks</a>
+    </section>
+  </section>
+
+  <article class="content-wrapper">
+
+    <section class="container">
+
+      
+
+      <div class="article-meta" id="article-meta" style="top: auto;">
+        <nav class="toc">
+          <h1>Table of Contents</h1>
+
+          <ul><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-introduction-lowlatency">The Problem: Low Latency Client-Server and Server-Client Connections</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-introduction-sockets">Introducing WebSocket: Bringing Sockets to the Web</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-gettingstarted">Getting Started</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-cross">Cross Origin Communication</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-proxyservers">Proxy Servers</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-usetoday">Use WebSockets Today</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-serverside">The Server Side</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-usecases">Use Cases</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-examples">Demos</a></li><li><a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#toc-references">References</a></li></ul>
+        </nav>
+
+        <aside class="localizations">
+          <h1>Localizations</h1>
+          <ul>
+            
+              
+              <li><a href="https://www.html5rocks.com/de/tutorials/websockets/basics/">Deutsch</a></li>
+              
+              <li><a href="https://www.html5rocks.com/es/tutorials/websockets/basics/">Español</a></li>
+              
+              <li><a href="https://www.html5rocks.com/ja/tutorials/websockets/basics/">日本語</a></li>
+              
+              <li><a href="https://www.html5rocks.com/pt/tutorials/websockets/basics/">Português (Brasil)</a></li>
+              
+              <li><a href="https://www.html5rocks.com/ru/tutorials/websockets/basics/">Pусский</a></li>
+              
+              <li><a href="https://www.html5rocks.com/zh/tutorials/websockets/basics/">中文 (简体)</a></li>
+              
+              <li><a href="https://github.com/html5rocks/www.html5rocks.com/blob/master/CONTRIBUTING.md">Contribute another</a></li>
+            
+          </ul>
+        </aside>
+      </div>
+      
+
+      <div class="content" id="article-content">
+
+        <section class="byline">
+
+          <div class="byline-content">
+            
+            <section class="author-images">
+              <a href="https://www.html5rocks.com/profiles/#malteubl">
+                <img src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/malteubl.png" itemprop="photo" alt="Malte Ubl" title="Malte Ubl">
+              </a>
+
+              
+                <a href="https://www.html5rocks.com/profiles/#agektmr">
+                  <img src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/agektmr.png" itemprop="photo" alt="Eiji Kitamura" title="Eiji Kitamura">
+                </a>
+              
+            </section>
+
+            <section class="meta">
+              <div class="authors">
+                <strong>By</strong> <a href="https://www.html5rocks.com/profiles/#malteubl">Malte Ubl</a>
+                
+                  and <a href="https://www.html5rocks.com/profiles/#agektmr">Eiji Kitamura</a>
+                
+              </div>
+
+              
+
+              <div class="date">
+                <time pubdate=""><strong>Published:</strong> October 20th, 2010</time>
+                
+                <span><strong>Comments:</strong> <a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#disqus_thread" class="load-comments" data-disqus-identifier="https://www.html5rocks.com/tutorials/websockets/basics/">0</a></span>
+              </div>
+
+              <div id="notcompatible" class="hidden">
+                Your browser may not support the functionality in this article.
+              </div>
+            </section>
+            <div class="clear"></div>
+
+            
+          </div>
+        </section>
+
+        
+  <h2 id="toc-introduction-lowlatency">The Problem: Low Latency Client-Server and Server-Client Connections</h2>
+  <p>The web has been largely built around the so-called request/response paradigm of HTTP. A client loads up a web page and then nothing happens until the user clicks onto the next page. Around 2005, AJAX started to make the web feel more dynamic. Still, all HTTP communication was steered by the client, which required user interaction or periodic polling to load new data from the server.</p>
+
+  <p id="fallbacks">Technologies that enable the server to send data to the client in the very moment when it knows that new data is available have been around for quite some time. They go by names such as "Push" or <a href="http://en.wikipedia.org/wiki/Comet_(programming)">"Comet"</a>. One of the most common hacks to create the illusion of a server initiated connection is called long polling. With long polling, the client opens an HTTP connection to the server which keeps it open until sending response. Whenever the server actually has new data it sends the response (other techniques involve
+  <a href="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/net/Socket.html">Flash</a>, 
+  <a href="http://cometdaily.com/2007/12/27/a-standards-based-approach-to-comet-communication-with-rest/">XHR multipart</a> 
+  requests and so called <a href="http://cometdaily.com/2007/10/25/http-streaming-and-internet-explorer/">htmlfiles</a>). 
+  Long polling and the other techniques work quite well. You use them every day in applications such as GMail chat.</p>
+
+  <p>However, all of these work-arounds share one problem: They carry the overhead of HTTP, which doesn't make them well suited for low latency applications. Think multiplayer first person shooter games in the browser or any other online game with a realtime component.</p>
+
+  <h2 id="toc-introduction-sockets">Introducing WebSocket: Bringing Sockets to the Web</h2>
+
+  <p>The <a href="http://dev.w3.org/html5/websockets/">WebSocket</a> specification defines an API establishing "socket" connections between a web browser and a server. In plain words: There is an persistent connection between the client and the server and both parties can start sending data at any time. </p>
+
+  <h2 id="toc-gettingstarted">Getting Started</h2>
+
+  <p>You open up a WebSocket connection simply by calling the WebSocket constructor:</p>
+
+  <pre class="prettyprint"><span class="kwd">var</span><span class="pln"> connection </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">WebSocket</span><span class="pun">(</span><span class="str">'ws://html5rocks.websocket.org/echo'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">[</span><span class="str">'soap'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'xmpp'</span><span class="pun">]);</span></pre>
+
+  <p>Notice the <code>ws:</code>. This is the new URL schema for WebSocket connections. There is also
+  <code>wss:</code> for secure WebSocket connection the same way <code>https:</code> is used for secure HTTP 
+  connections.</p>
+
+  <p>Attaching some event handlers immediately to the connection allows you to know when the connection is opened, received incoming messages, or there is an error.</p>
+
+  <p>The second argument accepts optional subprotocols. It can be a string or an array of strings. Each string should represent a subprotocol name and server accepts only one of passed subprotocols in the array. Accepted subprotocol can be determined by accessing <code>protocol</code> property of WebSocket object.</p>
+
+  <p>The subprotocol names must be one of registered subprotocol names in <a href="http://www.iana.org/assignments/websocket/websocket.xml">IANA registry</a>. There is currently only one subprotocol name (soap) registered as of February 2012.</p>
+  
+  <pre class="prettyprint"><span class="com">// When the connection is open, send some data to the server</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">onopen </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  connection</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><span class="str">'Ping'</span><span class="pun">);</span><span class="pln"> </span><span class="com">// Send the message 'Ping' to the server</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+</span><span class="com">// Log errors</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">onerror </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">error</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'WebSocket Error '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> error</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+</span><span class="com">// Log messages from the server</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">onmessage </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'Server: '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">};</span></pre>
+
+  <h3 id="toc-gettingstarted-workercomm">Communicating with the Server</h3>
+
+  <p>As soon as we have a connection to the server (when the <code>open</code> event is fired) we can start sending data to the server using the <code>send('your message')</code> method on the connection object. It used to support only strings, but in the latest spec it now can send binary messages too. To send binary data, you can use either <code>Blob</code> or <code>ArrayBuffer</code> object.</p>
+
+  <pre class="prettyprint"><span class="com">// Sending String</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><span class="str">'your message'</span><span class="pun">);</span><span class="pln">
+
+</span><span class="com">// Sending canvas ImageData as ArrayBuffer</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> img </span><span class="pun">=</span><span class="pln"> canvas_context</span><span class="pun">.</span><span class="pln">getImageData</span><span class="pun">(</span><span class="lit">0</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> </span><span class="lit">400</span><span class="pun">,</span><span class="pln"> </span><span class="lit">320</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> binary </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Uint8Array</span><span class="pun">(</span><span class="pln">img</span><span class="pun">.</span><span class="pln">data</span><span class="pun">.</span><span class="pln">length</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln"> i </span><span class="pun">&lt;</span><span class="pln"> img</span><span class="pun">.</span><span class="pln">data</span><span class="pun">.</span><span class="pln">length</span><span class="pun">;</span><span class="pln"> i</span><span class="pun">++)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  binary</span><span class="pun">[</span><span class="pln">i</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> img</span><span class="pun">.</span><span class="pln">data</span><span class="pun">[</span><span class="pln">i</span><span class="pun">];</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><span class="pln">binary</span><span class="pun">.</span><span class="pln">buffer</span><span class="pun">);</span><span class="pln">
+
+</span><span class="com">// Sending file as Blob</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> file </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">'input[type="file"]'</span><span class="pun">).</span><span class="pln">files</span><span class="pun">[</span><span class="lit">0</span><span class="pun">];</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><span class="pln">file</span><span class="pun">);</span></pre>
+
+  <p>Equally the server might send us messages at any time. Whenever this happens the <code>onmessage</code> callback fires. The callback receives an event object and the actual message is accessible via the <code>data</code> property.</p>
+
+  <p>WebSocket can also receive binary messages in the latest spec. Binary frames can be received in <code>Blob</code> or <code>ArrayBuffer</code> format. To specify the format of the received binary, set the binaryType property of WebSocket object to either 'blob' or 'arraybuffer'. The default format is 'blob'. (You don't have to align binaryType param on sending.)</p>
+
+  <pre class="prettyprint"><span class="com">// Setting binaryType to accept received binary as either 'blob' or 'arraybuffer'</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">binaryType </span><span class="pun">=</span><span class="pln"> </span><span class="str">'arraybuffer'</span><span class="pun">;</span><span class="pln">
+connection</span><span class="pun">.</span><span class="pln">onmessage </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">.</span><span class="pln">byteLength</span><span class="pun">);</span><span class="pln"> </span><span class="com">// ArrayBuffer object if binary</span><span class="pln">
+</span><span class="pun">};</span></pre>
+
+  <p>Another newly added feature of WebSocket is extensions. Using extensions, it will be possible to send frames <a href="http://tools.ietf.org/html/draft-tyoshino-hybi-websocket-perframe-deflate-05">compressed</a>, <a href="http://tools.ietf.org/html/draft-tamplin-hybi-google-mux-02">multiplexed</a>, etc. You can find server accepted extensions by examining the extensions property of the WebSocket object after the open event. There is no officially published extensions spec just yet as of February 2012.</p><p>
+
+  </p><pre class="prettyprint"><span class="com">// Determining accepted extensions</span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">connection</span><span class="pun">.</span><span class="pln">extensions</span><span class="pun">);</span></pre>
+
+  <h2 id="toc-cross">Cross Origin Communication</h2>
+
+  <p>Being a modern protocol, cross origin communication is baked right into WebSocket. While you should still make sure only to communicate with clients and servers that you trust, WebSocket enables communication between parties on any domain. The server decides whether to make its service available to all clients or only those that reside on a set of well defined domains.</p><p>
+
+  </p><h2 id="toc-proxyservers">Proxy Servers</h2>
+
+  <p>Every new technology comes with a new set of problems. In the case of WebSocket it is the compatibility with proxy servers which mediate HTTP connections in most company networks. The WebSocket protocol uses the HTTP upgrade system (which is normally used for HTTP/SSL) to "upgrade" an HTTP connection to a WebSocket connection. Some proxy servers do not like this and will drop the connection. Thus, even if a given client uses the WebSocket protocol, it may not be possible to establish a connection. This makes the next section even more important :)</p>
+
+  <h2 id="toc-usetoday">Use WebSockets Today</h2>
+  
+  <p>WebSocket is still a young technology and not fully implemented in all browsers. However, you can use WebSocket today with libraries that use one of the <a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#fallbacks">fallbacks</a> mentioned above whenever WebSocket is not available. A library that has become very popular in this domain is <a href="http://socket.io/">socket.io</a> which comes with a client and a server implementation of the protocol and includes fallbacks (socket.io doesn't support binary messaging yet as of Februrary 2012). There are also commercial solutions such as <a href="http://pusherapp.com/">PusherApp</a> which can be easily integrated into any web environment by providing a HTTP API to send WebSocket messages to clients. Due to the extra HTTP request there will always be extra overhead compared to pure WebSocket.</p>
+  
+  <h2 id="toc-serverside">The Server Side</h2>
+  
+  <p>Using WebSocket creates a whole new usage pattern for server side applications. While traditional server stacks such as LAMP are designed around the HTTP request/response cycle they often do not deal well with a large number of open WebSocket connections. Keeping a large number of connections open at the same time requires an architecture that receives high concurrency at a low performance cost. Such architectures are usually designed around either threading or so called non-blocking IO.</p>
+  
+  <h3 id="toc-serversideimplementations">Server Side Implementations</h3>
+  
+  <ul>
+    <li>Node.js
+      <ul>
+        <li><a href="http://socket.io/">Socket.IO</a></li>
+        <li><a href="https://github.com/Worlize/WebSocket-Node">WebSocket-Node</a></li>
+        <li><a href="https://github.com/einaros/ws">ws</a></li>
+      </ul>
+    </li>
+    <li>Java
+      <ul>
+        <li><a href="http://www.eclipse.org/jetty/">Jetty</a></li>
+      </ul>
+    </li>
+    <li>Ruby
+      <ul>
+        <li><a href="http://github.com/igrigorik/em-websocket">EventMachine</a></li>
+      </ul>
+    </li>
+    <li>Python
+      <ul>
+        <li><a href="http://code.google.com/p/pywebsocket/">pywebsocket</a></li>
+        <li><a href="https://github.com/facebook/tornado">Tornado</a>
+      </li></ul>
+    </li>
+    <li>Erlang
+      <ul>
+        <li><a href="https://github.com/michilu/shirasu">Shirasu</a></li>
+      </ul>
+    </li>
+    <li>C++
+      <ul>
+        <li><a href="http://git.warmcat.com/cgi-bin/cgit/libwebsockets/">libwebsockets</a></li>
+      </ul>
+    </li>
+    <li>.NET
+      <ul>
+        <li><a href="http://superwebsocket.codeplex.com/">SuperWebSocket</a></li>
+      </ul>
+    </li>
+  </ul>
+  
+  <h3 id="toc-protocolversion">Protocol Versions</h3>
+  
+  <p>The wire protocol (a handshake and the data transfer between client and server) for WebSocket is now <a href="http://tools.ietf.org/html/rfc6455">RFC6455</a>. The latest Chrome and Chrome for Android are fully compatible with RFC6455 including binary messaging. Also, Firefox will be compatible on version 11, Internet Explorer on version 10. You can still use older protocol versions but it is not recommended since they are known to be vulnerable. If you have server implementations for older versions of WebSocket protocol, we recommend you to upgrade it to the latest version.</p><p>
+  
+  </p><h2 id="toc-usecases">Use Cases</h2>
+
+  <p>Use WebSocket whenever you need a truly low latency, near realtime connection between the client and the server. Keep in mind that this might involve rethinking how you build your server side applications with a new focus on technologies such as event queues. Some example use cases are:</p>
+  
+  <ul>
+    <li>Multiplayer online games</li>
+    <li>Chat applications</li>
+    <li>Live sports ticker</li>
+    <li>Realtime updating social streams</li>
+  </ul>
+
+  <h2 id="toc-examples">Demos</h2>
+  <ul>
+    <li><a href="http://labs.dinahmoe.com/plink/">Plink</a>
+    </li><li><a href="http://paintwith.me/">Paint With Me</a>
+    </li><li><a href="http://connorhd.co.uk/project/pixelatr/">Pixelatr</a>
+    </li><li><a href="http://www.dashed.com/">Dashed</a>
+    </li><li><a href="http://scrabb.ly/">Massively multiplayer online crossword</a></li>
+    <li><a href="http://www.websockets.org/echo.html">Ping server (used in examples above)</a></li>
+    <li><a href="http://html5demos.com/web-socket">HTML5demos sample</a></li>
+  </ul>
+
+  <h2 id="toc-references">References</h2>
+  <ul>
+    <li><a href="http://dev.w3.org/html5/websockets/">The WebSocket API</a></li>
+    <li><a href="http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-03">The WebSocket Protocol</a></li>
+    <li><a href="https://developer.mozilla.org/en/WebSockets">WebSockets - MDN</a></li>
+  </ul>
+
+      </div>
+    </section>
+  </article>
+
+  
+  <section class="disqus pattern-bg-lighter">
+
+    <div id="disqus" class="container">
+
+      <h2>Comments</h2>
+
+      <div id="disqus_thread">
+
+        <a href="https://www.html5rocks.com/en/tutorials/websockets/basics/#disqus_thread" class="load-comments" data-disqus-identifier="https://www.html5rocks.com/tutorials/websockets/basics/">0</a>
+
+      </div>
+    </div>
+
+    <noscript>
+      <p class="center">
+        <strong>
+          <a href="https://disqus.com/?ref_noscript">Please enable JavaScript to view the comments powered by Disqus.</a>
+        </strong>
+      </p>
+    </noscript>
+
+    <script>
+
+      var disqus_shortname = 'html5rocks';
+      var disqus_identifier = 'https://www.html5rocks.com/tutorials/websockets/basics/';
+      var disqus_url = 'https://www.html5rocks.com/tutorials/websockets/basics/';
+      var disqus_developer = 0;
+
+      var disqus_config = function () {
+        var funky_language_code_mapping = {
+          'de': 'de_inf',
+          'es': 'es_ES',
+          'pt': 'pt_EU',
+          'sr': 'sr_CYRL',
+          'sv': 'sv_SE',
+          'zh': 'zh_HANT'
+        };
+        this.language = funky_language_code_mapping['en'] ||
+                        'en';
+
+        this.callbacks.onReady = [ function () {
+                                      try {
+                                        ga('send', 'event', 'View comments');
+                                      } catch(err){}
+                                   } ];
+        this.callbacks.onNewComment = [ function (comment) {
+                                          try {
+                                            ga('send', 'event', 'Commented');
+                                          } catch(err){}
+                                        } ];
+      };
+
+      window.addEventListener('load', function(e) {
+
+        var c = document.createElement('script');
+        c.type = 'text/javascript';
+        c.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        c.async = true;
+
+        var s = document.getElementsByTagName('script')[0], sp = s.parentNode;
+        sp.insertBefore(c, s);
+
+        if (window.location.hash === '#disqus_thread')
+          loadComments();
+
+      }, false);
+
+      var disqus_loaded = false;
+      function loadComments() {
+
+        if (disqus_loaded)
+          return;
+
+        disqus_loaded = true;
+
+        ga('send', 'event', 'Interactions', 'Comments', 'Comments Loaded');
+
+        var s = document.getElementsByTagName('script')[0], sp = s.parentNode;
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+
+        var disqusContainer = document.getElementById('disqus');
+        disqusContainer.classList.add('active');
+
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+        sp.insertBefore(dsq, s);
+      }
+
+      function outgoing(url) {
+        try {
+          ga('send', 'event', 'Outbound Links' , url);
+        } catch(err){}
+      }
+      // Open external links (also that don't have a target defined) in a new tab.
+      var externLinks = document.querySelectorAll('article.tutorial a[href^="http"]:not([target])');
+      for(var i = 0, a; a = externLinks[i]; ++i) {
+        a.target = '_blank';
+        a.addEventListener('click', new Function('outgoing(' + '"' + a.href.replace(/.*?:\/\//g, "") + '"' + ');'));
+      }
+
+      var loadCommentsButtons = document.querySelectorAll('.load-comments');
+      for(var l = 0; l < loadCommentsButtons.length; l++)
+        loadCommentsButtons[l].addEventListener('click', loadComments);
+
+    </script>
+  </section>
+  
+
+  <footer>
+    <div class="container">
+
+      
+        <h1>Next steps</h1>
+
+        
+
+        <aside class="panel share">
+          <h2>Share</h2>
+          <style>
+            aside.share.native .android { display: inline-block !important;
+            background-image: url(https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg/ic_share_white_36px.svg) !important;
+            background-size: 48px 48px !important;
+             background-position: 0, 0 !important; }
+          </style>
+          <a href="https://twitter.com/share?url=https://www.html5rocks.com/tutorials/websockets/basics/&amp;text=Introducing%20WebSockets:%20Bringing%20Sockets%20to%20the%20Web&amp;lang=en&amp;via=ChromiumDev&amp;related=ChromiumDev" class="android" style="display: none;">Share</a>
+          <a href="https://twitter.com/share?url=https://www.html5rocks.com/tutorials/websockets/basics/&amp;text=Introducing%20WebSockets:%20Bringing%20Sockets%20to%20the%20Web&amp;lang=en&amp;via=ChromiumDev&amp;related=ChromiumDev" class="twitter" target="_blank">Twitter</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.html5rocks.com/tutorials/websockets/basics/" class="facebook" target="_blank">Facebook</a>
+          <a href="https://plus.google.com/share?url=https://www.html5rocks.com/tutorials/websockets/basics/" class="gplus" onclick="javascript:window.open(this.href, &#39;&#39;, &#39;menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600&#39;);return false;">Google+</a>
+        </aside>
+
+        <aside class="panel rss">
+          <h2>Subscribe</h2>
+          <p>Enjoyed this article? Grab the <a href="http://feeds.feedburner.com/html5rocks">RSS feed</a> and stay up-to-date.</p>
+        </aside>
+
+      
+
+      <p class="licensing">
+      
+        Except as otherwise <a href="http://code.google.com/policies.html#restrictions">noted</a>, the content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>, and code samples are licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.
+      
+      </p>
+
+    </div>
+  </footer>
+
+  <script>
+    window.isCompatible = function() {
+      
+  return Modernizr.websockets;
+
+    };
+    
+    if(navigator.share !== undefined) {
+    document.addEventListener('DOMContentLoaded', e => {
+      var shareBox = document.querySelector('aside.share');
+      if(shareBox !== undefined) { shareBox.classList.toggle('native'); }
+      
+      var shareBtn = document.querySelector('aside.share a.android');
+      shareBtn.addEventListener('click', clickEvent => {
+        clickEvent.preventDefault();
+        const title = "Introducing WebSockets: Bringing Sockets to the Web";
+        const url = "https://www.html5rocks.com/tutorials/websockets/basics/";
+        navigator.share({title: title, text: url, url: url})
+          .then(() => console.log('Successful share'),
+           error => console.log('Error sharing:', error));
+      });
+    });
+}
+
+    if (isCompatible() === false) {
+      document.getElementById('notcompatible').className = '';
+    }
+
+    function _prettyPrint() {
+      if (typeof customPrettyPrintLanguage != 'undefined') {
+        customPrettyPrintLanguage();
+      }
+      prettyPrint();
+    }
+  </script>
+  <script async="" src="./Introducing WebSockets_ Bringing Sockets to the Web - HTML5 Rocks_files/prettify.min.js" onload="_prettyPrint()"></script>
+  <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-XXXX"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MB3LRF');</script>
+<!-- End Google Tag Manager -->
+
+
+  </div>
+
+  <script>
+  (function() {
+
+    // Kill feedburner and marketing tracking arguments, but let them register
+    // before we do it.
+    setTimeout(function() {
+      if (/^\?utm_/.test(document.location.search) &&
+          window.history.replaceState) {
+        window.history.replaceState(
+            {}, '', document.location.href.replace(/\?utm_.*/, ''));
+      }
+    }, 2000);
+
+    var siteHeader = document.getElementById('siteheader');
+    var navToggle = document.getElementById('navtoggle');
+    var siteNav = document.getElementById('sitenav');
+
+    function toggle(target, forceActive) {
+
+      if (typeof toc !== 'undefined') {
+        // Switch off whichever one is not the
+        // current target
+        if (target === toc)
+          siteNav.classList.remove('active');
+        else
+          toc.classList.remove('active');
+      }
+
+      // Toggle if no force parameter is set
+      if (typeof forceActive === 'undefined') {
+        target.classList.toggle('active');
+      } else {
+        if (forceActive)
+          target.classList.add('active');
+        else
+          target.classList.remove('active');
+      }
+
+      // now find out what the set state ended up being
+      var isActive = target.classList.contains('active');
+
+      if (isActive)
+        siteHeader.classList.add('expanded');
+      else
+        siteHeader.classList.remove('expanded');
+
+    }
+
+    navToggle.addEventListener('click', function(e) {
+      toggle(siteNav);
+      e.preventDefault();
+    });
+
+    
+
+    var tocToggle = document.getElementById('toctoggle');
+    var toc = document.getElementById('toc');
+    var articleMeta = document.getElementById('article-meta');
+    var articleContent = document.getElementById('article-content');
+    var articleMetaHeight = 0;
+    var articleMetaMaxY = 0;
+    var articleMetaMinY = 0;
+    var articleContentPadding = 200;
+
+    var tocLinks = document.querySelectorAll('.toc a');
+    for (var t = 0; t < tocLinks.length; t++)
+      tocLinks[t].addEventListener('click', onTocLinkClick);
+
+    tocToggle.addEventListener('click', function(e) {
+      toggle(toc);
+      e.preventDefault();
+    });
+
+    toc.addEventListener('click', function(e) {
+      if (e.target !== siteNav)
+        toggle(toc, false);
+    });
+
+    function onTocLinkClick() {
+      ga('send', 'event', 'Interactions', 'TOC', 'TOC Clicked');
+    }
+
+    function setMinScrollYFromMetaY() {
+      var scrollPosition = window.scrollY;
+
+      var articleMetaBounds = articleMeta.getBoundingClientRect();
+      var articleMetaTop = Math.max(352,
+          articleMetaBounds.top - 20 + scrollPosition);
+
+      articleMetaHeight = articleMetaBounds.bottom - articleMetaBounds.top;
+      articleMetaMinY = articleMetaTop;
+    }
+
+    function setMaxScrollYFromContentHeight() {
+
+      var scrollPosition = window.scrollY;
+
+      var articleContentBounds = articleContent.getBoundingClientRect();
+      var articleContentTop = articleContentBounds.top + scrollPosition;
+      var articleContentHeight = articleContentBounds.bottom - articleContentBounds.top;
+
+      articleMetaMaxY = articleContentTop +
+          articleContentHeight -
+          articleMetaHeight -
+          articleContentPadding;
+
+    }
+
+    function onScroll(e) {
+
+      if (window.scrollY >= articleMetaMinY) {
+
+        articleMeta.classList.add('sticky');
+
+        var articleMetaTop = 22 - Math.max(0, window.scrollY - articleMetaMaxY);
+        articleMeta.style.top = articleMetaTop + 'px';
+
+      } else {
+        articleMeta.classList.remove('sticky');
+        articleMeta.style.top = 'auto';
+      }
+    }
+
+    if (articleMeta.getBoundingClientRect) {
+      setMinScrollYFromMetaY();
+      setMaxScrollYFromContentHeight();
+      document.addEventListener('scroll', onScroll);
+      window.addEventListener('load', setMaxScrollYFromContentHeight, false);
+    }
+
+    
+  })();
+  </script>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-15028909-1', 'auto');
+  ga('create', 'UA-49880327-4', 'auto', {'name': 'html5rocks'});
+
+  ga('send', 'pageview');
+  ga('html5rocks.send', 'pageview');
+
+  </script>
+   <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-XXXX"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MB3LRF');</script>
+<!-- End Google Tag Manager -->
+
+
+</body></html>
